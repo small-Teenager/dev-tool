@@ -1,0 +1,75 @@
+version: "3.9"
+
+services:
+
+ prometheus:
+   image: prom/prometheus:latest
+   container_name: prometheus
+   hostname: prometheus
+   restart: always
+   volumes:
+     - ${DATA_PATH}/.data/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+     - ${DATA_PATH}/.data/monitoring/prometheus/data:/prometheus
+   command:
+     - '--config.file=/etc/prometheus/prometheus.yml'
+     # 本地数据存储的路径
+     - '--storage.tsdb.path=/prometheus'
+     #历史数据最大保留时间，默认15天
+     - '--storage.tsdb.retention.time=30d'
+     - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+     - '--web.console.templates=/usr/share/prometheus/consoles'
+     #热加载配置
+     - '--web.enable-lifecycle'
+       #api配置
+     #- '--web.enable-admin-api'
+   ports:
+     - "9090:9090"
+   expose:
+     - '9090'
+   networks:
+     - dev-tool
+
+ grafana:
+   image: grafana/grafana:latest
+   container_name: grafana
+   hostname: grafana
+   restart: always
+   volumes:
+     - ${DATA_PATH}/.data/monitoring/grafana/data:/var/lib/grafana
+   links:
+     - prometheus
+   depends_on:
+     - prometheus
+   ports:
+     - "3000:3000"
+   networks:
+     - dev-tool
+
+ redis-exporter:
+   image: oliver006/redis_exporter
+   env_file:
+     - "${ENV_FILE:-.env}"
+   ports:
+     - "9121:9121"
+   environment:
+     - REDIS_ADDR=redis://127.0.0.1:6379
+     - REDIS_PASSWORD=${REDIS_PASSWORD}
+   networks:
+     - dev-tool
+
+ redis-cluster-exporter:
+   image: oliver006/redis_exporter
+   env_file:
+     - "${ENV_FILE:-.env}"
+   ports:
+     - "9120:9120"
+   environment:
+     - REDIS_ADDR=redis://127.0.0.1:7701,redis://127.0.0.1:7702,redis://127.0.0.1:7703,redis://127.0.0.1:7704,redis://127.0.0.1:7705,redis://127.0.0.1:7706
+     - REDIS_EXPORTER_WEB_LISTEN_ADDRESS=:9120
+   networks:
+     - dev-tool
+
+networks:
+  dev-tool:
+    name: dev-tool_default
+    driver: bridge

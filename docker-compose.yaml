@@ -1,0 +1,182 @@
+version: "3.9"
+
+services:
+
+
+#  redis:
+#    container_name: redis
+#    image: ${IMAGE_REDIS}
+#    pull_policy: ${IMAGE_PULL_POLICY:-if_not_present}
+#    env_file:
+#      - "${ENV_FILE:-.env}"
+#    restart: always
+#    command:
+#      [
+#          "redis-server",
+#          "--appendonly",
+#          "yes",
+#          "--requirepass",
+#          "${REDIS_PASSWORD}",
+#      ]
+#    expose:
+#      - "6379"
+#    ports:
+#      - "6379:6379"
+#    volumes:
+#      - ${DATA_PATH}/.data/redis:/data
+#    environment:
+#      - TZ=${TIMEZONE}
+#    networks:
+#      - dev-tool
+
+# mysql:
+#   container_name: mysql
+#   image: ${IMAGE_MYSQL}
+#   pull_policy: ${IMAGE_PULL_POLICY:-if_not_present}
+#   restart: always
+#   volumes:
+#     # 数据挂载
+#     - ${DATA_PATH}/.data/mysql:/var/lib/mysql
+#     # initdb 初始化数据
+##      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+#   expose:
+#     - "3306"
+#   ports:
+#     - "3306:3306"
+#   environment:
+#     # root 密码
+#     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+#     # 初始化数据库(后续的初始化sql会在这个库执行)
+#     - MYSQL_DATABASE=${MYSQL_DATABASE}
+#     - TZ=${TIMEZONE}
+#   command: --default-authentication-plugin=mysql_native_password
+#     --character-set-server=utf8mb4
+#     --collation-server=utf8mb4_general_ci
+#     --sql_mode=IGNORE_SPACE,NO_ENGINE_SUBSTITUTION
+#     --lower_case_table_names=2
+#   healthcheck:
+##      test: ""
+#     # 两次健康检查的间隔，默认为 30 秒;
+#     interval: 5s
+#     # 健康检查命令运行超时时间，如果超过这个时间，本次健康检查就被视为失败，默认 30 秒;
+#     timeout: 5s
+#     start_period: 30s
+#     # 当连续失败指定次数后，则将容器状态视为 unHealthy, 默认 3 次
+#     retries: 60
+#   networks:
+#     - dev-tool
+
+ postgres:
+   image: postgres
+   container_name: postgres
+   restart: always
+   environment:
+     POSTGRES_USER: root
+     POSTGRES_PASSWORD: root
+   ports:
+      - "5432:5432"
+   volumes:
+      - ${DATA_PATH}/.data/PostgreSQL:/var/lib/postgresql/data
+   networks:
+     - dev-tool
+
+ elasticsearch:
+   image: elasticsearch:7.16.2  #镜像
+   container_name: elasticsearch  #定义容器名称
+   restart: always  #开机启动，失败也会一直重启
+   environment:
+     - "cluster.name=elasticsearch" #设置集群名称为elasticsearch
+     - "discovery.type=single-node" #以单一节点模式启动
+     - "ES_JAVA_OPTS=-Xms512m -Xmx1024m" #设置使用jvm内存大小
+   volumes:
+     - ./.data/elasticsearch/plugins:/usr/share/elasticsearch/plugins #插件文件挂载
+     - ./.data/elasticsearch:/usr/share/elasticsearch/data #数据文件挂载
+   ports:
+     - "9200:9200"
+     - "9300:9300"
+
+   networks:
+     - dev-tool
+
+# kibana:
+#   image: kibana:7.7.0
+#   container_name: kibana
+#   restart: always
+#   depends_on:
+#     - elasticsearch #kibana在elasticsearch启动之后再启动
+#   environment:
+#     - ELASTICSEARCH_URL=http://elasticsearch:9200 #设置访问elasticsearch的地址
+#   ports:
+#     - "5601:5601"
+#   networks:
+#     - dev-tool
+
+
+#  rabbitmq:
+#    container_name: rabbitmq
+#    image: ${IMAGE_RABBITMQ}
+#    pull_policy: ${IMAGE_PULL_POLICY:-if_not_present}
+#    restart: always
+#    volumes:
+#      - ${DATA_PATH}/.data/rabbitmq:/var/lib/rabbitmq
+#    expose:
+#      - "5671"
+#      - "5672"
+#      - "15672"
+#    ports:
+#      - "5671:5671"
+#      - "5672:5672"
+#      - "15672:15672"
+#    environment:
+#      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
+#      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+#    networks:
+#      - dev-tool
+
+#   mongodb:
+#     container_name: mongodb
+#     image: mongo:latest
+#     ports:
+#       - "27017:27017"
+#     restart: always
+#     command:
+#       - "--auth"
+#     environment:
+#       - MONGO_INITDB_ROOT_USERNAME=root
+#       - MONGO_INITDB_ROOT_PASSWORD=root
+#       - wiredTigerCacheSizeGB=2
+#     volumes:
+#       - ${DATA_PATH}/.data/mongodb:/data/db
+#       - ${DATA_PATH}/.data/mongodb:/var/lib/mongodb
+#       - ${DATA_PATH}/.data/mongodb/logs:/var/log/mongodb
+#     networks:
+#       - dev-tool
+#
+#   # mongo客户端
+#   mongo-express:
+#     image: mongo-express:latest
+#     container_name: mongo-express
+#     restart: always
+#     links:
+#       - mongodb:mongodb
+#     depends_on:
+#       - mongodb
+#     ports:
+#       - "27018:8081"
+#     environment:
+#       ME_CONFIG_OPTIONS_EDITORTHEME: 3024-night
+#       ME_CONFIG_MONGODB_SERVER: mongodb
+#       ME_CONFIG_MONGODB_ADMINUSERNAME: root
+#       ME_CONFIG_MONGODB_ADMINPASSWORD: root
+#       ME_CONFIG_BASICAUTH_USERNAME: root
+#       ME_CONFIG_BASICAUTH_PASSWORD: root
+#     networks:
+#       - dev-tool
+
+
+
+
+networks:
+  dev-tool:
+    name: dev-tool_default
+    driver: bridge

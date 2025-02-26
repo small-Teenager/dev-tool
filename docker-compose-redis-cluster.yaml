@@ -1,0 +1,115 @@
+version: "3.9"
+
+services:
+  redis-7701:
+    image: ${IMAGE_REDIS}
+    container_name: redis-7701
+    env_file:
+      - "${ENV_FILE:-.env}"
+    ports:
+      - "7701:7701"
+      - "17701:17701"
+#    command: redis-server --cluster-enabled yes --appendonly yes --appendfilename "appendonly-7701.aof" --appendfsync everysec --cluster-node-timeout 5000 --port 7701 --protected-mode no --cluster-announce-port 7701 --cluster-announce-bus-port 17701
+    command: sh -c "redis-server /usr/local/etc/redis/redis.conf"
+    privileged: true # 拥有容器内命令执行的权限
+    volumes:
+      - ${DATA_PATH}/.data/redis-cluster/7701:/data
+      - ${DATA_PATH}/.data/redis-cluster/7701/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - TZ=${TIMEZONE}
+    networks:
+      - redis-cluster
+  redis-7702:
+    image: ${IMAGE_REDIS}
+    container_name: redis-7702
+    env_file:
+      - "${ENV_FILE:-.env}"
+    ports:
+      - "7702:7702"
+      - "17702:17702"
+#    command: redis-server --cluster-enabled yes --appendonly yes  --appendfilename "appendonly-7702.aof" --appendfsync everysec --cluster-node-timeout 5000 --port 7702 --protected-mode no --cluster-announce-port 7702 --cluster-announce-bus-port 17702
+    command: sh -c "redis-server /usr/local/etc/redis/redis.conf"
+    privileged: true # 拥有容器内命令执行的权限
+    volumes:
+      - ${DATA_PATH}/.data/redis-cluster/7702:/data
+      - ${DATA_PATH}/.data/redis-cluster/7702/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - TZ=${TIMEZONE}
+    networks:
+      - redis-cluster
+  redis-7703:
+    image: ${IMAGE_REDIS}
+    container_name: redis-7703
+    env_file:
+      - "${ENV_FILE:-.env}"
+    ports:
+      - "7703:7703"
+      - "17703:17703"
+#    command: redis-server --cluster-enabled yes --appendonly yes --appendfilename "appendonly-7703.aof" --appendfsync everysec --cluster-node-timeout 5000 --port 7703 --protected-mode no --cluster-announce-port 7703 --cluster-announce-bus-port 17703
+    command: sh -c "redis-server /usr/local/etc/redis/redis.conf"
+    privileged: true # 拥有容器内命令执行的权限
+    volumes:
+      - ${DATA_PATH}/.data/redis-cluster/7703:/data
+      - ${DATA_PATH}/.data/redis-cluster/7703/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - TZ=${TIMEZONE}
+    networks:
+      - redis-cluster
+
+  redis-7704:
+    image: ${IMAGE_REDIS}
+    container_name: redis-7704
+    env_file:
+      - "${ENV_FILE:-.env}"
+    ports:
+      - "7704:7704"
+      - "17704:17704"
+    command: sh -c "redis-server /usr/local/etc/redis/redis.conf"
+    privileged: true # 拥有容器内命令执行的权限
+    volumes:
+      - ${DATA_PATH}/.data/redis-cluster/7704:/data
+      - ${DATA_PATH}/.data/redis-cluster/7704/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - TZ=${TIMEZONE}
+    networks:
+      - redis-cluster
+  redis-7705:
+    image: ${IMAGE_REDIS}
+    container_name: redis-7705
+    env_file:
+      - "${ENV_FILE:-.env}"
+    ports:
+      - "7705:7705"
+      - "17705:17705"
+    command: sh -c "redis-server /usr/local/etc/redis/redis.conf"
+    privileged: true # 拥有容器内命令执行的权限
+    volumes:
+      - ${DATA_PATH}/.data/redis-cluster/7705:/data
+      - ${DATA_PATH}/.data/redis-cluster/7705/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - TZ=${TIMEZONE}
+    networks:
+      - redis-cluster
+  redis-7706:
+    image: ${IMAGE_REDIS}
+    container_name: redis-7706
+    env_file:
+      - "${ENV_FILE:-.env}"
+    ports:
+      - "7706:7706"
+      - "17706:17706"
+    command: sh -c "redis-server /usr/local/etc/redis/redis.conf"
+    privileged: true # 拥有容器内命令执行的权限
+    volumes:
+      - ${DATA_PATH}/.data/redis-cluster/7706:/data
+      - ${DATA_PATH}/.data/redis-cluster/7706/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - TZ=${TIMEZONE}
+    networks:
+      - redis-cluster
+
+networks:
+  redis-cluster:
+    name: redis-cluster_default
+    driver: bridge
+
