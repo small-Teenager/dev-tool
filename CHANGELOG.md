@@ -101,3 +101,4 @@
 * chore: trigger multi-arch build only on tag as it is extreme slow ([#1106](https://github.com/apitable/apitable/pull/1106)) @networkhermit
 * chore(deps): bump word-wrap from 1.2.3 to 1.2.4 ([#1104](https://github.com/apitable/apitable/pull/1104)) @dependabot[bot]
 * sync/hosted into develop ([#1123](https://github.com/apitable/apitable/pull/1123)) @functionChenGuoFeng
+
